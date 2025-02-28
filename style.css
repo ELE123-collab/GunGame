@@ -9,6 +9,14 @@ body {
   margin: 0;
 }
 
+.bullet {
+  position: absolute;
+  width: 5px; /* Smaller pellets */
+  height: 5px;
+  background-color: #FF0000; /* Red pellets */
+  border-radius: 50%; /* Make pellets circular */
+}
+
 .game-container {
   text-align: center;
   background-color: #333;
