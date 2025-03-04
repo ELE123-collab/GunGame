@@ -1,24 +1,19 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gun Game</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Gun Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="game-container">
-    <div class="stats">
-      <p>Health: <span id="health">100</span></p>
-      <p>Ammo: <span id="ammo">30</span>/30</p>
-      <p>Mode: <span id="fire-mode">Semi-Auto</span></p>
+    <div id="game-container">
+        <div id="player"></div>
+        <div id="ammo">Ammo: 30</div>
+        <div id="health">Health: 100</div>
+        <div id="kills">Kills: 0</div>
+<div id="deaths">Deaths: 0</div>
     </div>
-    <div class="controls">
-      <button id="fire-btn">Fire</button>
-      <button id="reload-btn">Reload</button>
-      <button id="mode-btn">Switch to Auto</button>
-    </div>
-  </div>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
