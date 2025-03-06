@@ -4,14 +4,64 @@ const ammoDisplay = document.getElementById('ammo');
 const healthDisplay = document.getElementById('health');
 const killsDisplay = document.getElementById('kills');
 const deathsDisplay = document.getElementById('deaths');
+const highScoreDisplay = document.getElementById('high-score');
 
-let ammo = 30;
-const maxAmmo = 30; // Maximum ammo capacity
+let ammo = 100;
+const maxAmmo = 100; // Maximum ammo capacity
 let health = 100;
 let kills = 0; // Track number of kills
 let deaths = 0; // Track number of deaths
+let highScore = 0; // Track high score
 let gameOver = false;
 let isReloading = false; // Track if the player is currently reloading
+
+// Load saved game state and high score
+function loadGame() {
+    const savedGame = JSON.parse(localStorage.getItem('savedGame'));
+    if (savedGame) {
+        ammo = savedGame.ammo;
+        health = savedGame.health;
+        kills = savedGame.kills;
+        deaths = savedGame.deaths;
+        updateUI();
+    }
+
+    const savedHighScore = localStorage.getItem('highScore');
+    if (savedHighScore) {
+        highScore = parseInt(savedHighScore);
+        highScoreDisplay.textContent = `High Score: ${highScore}`;
+    }
+}
+
+// Save game state
+function saveGame() {
+    const gameState = {
+        ammo: ammo,
+        health: health,
+        kills: kills,
+        deaths: deaths,
+    };
+    localStorage.setItem('savedGame', JSON.stringify(gameState));
+    alert("Game saved!");
+}
+
+// Update high score
+function updateHighScore() {
+    if (kills > highScore) {
+        highScore = kills;
+        localStorage.setItem('highScore', highScore);
+        highScoreDisplay.textContent = `High Score: ${highScore}`;
+    }
+}
+
+// Update UI with current game state
+function updateUI() {
+    ammoDisplay.textContent = `Ammo: ${ammo}`;
+    healthDisplay.textContent = `Health: ${health}`;
+    killsDisplay.textContent = `Kills: ${kills}`;
+    deathsDisplay.textContent = `Deaths: ${deaths}`;
+    updateHighScore(); // Check and update high score
+}
 
 // Player movement
 document.addEventListener('mousemove', (e) => {
@@ -24,7 +74,7 @@ document.addEventListener('mousemove', (e) => {
 function shoot() {
     if (ammo > 0 && !gameOver && !isReloading) {
         ammo--;
-        ammoDisplay.textContent = `Ammo: ${ammo}`;
+        updateUI();
 
         const bullet = document.createElement('div');
         bullet.classList.add('bullet');
@@ -48,7 +98,7 @@ function shoot() {
                     bullet.remove();
                     clearInterval(bulletInterval);
                     kills++; // Increment kills counter
-                    killsDisplay.textContent = `Kills: ${kills}`;
+                    updateUI();
                 }
             });
         }, 20);
@@ -62,7 +112,7 @@ function reload() {
         ammoDisplay.textContent = `Reloading...`;
         setTimeout(() => {
             ammo = maxAmmo;
-            ammoDisplay.textContent = `Ammo: ${ammo}`;
+            updateUI();
             isReloading = false;
         }, 2000); // 2-second reload time
     }
@@ -75,6 +125,9 @@ document.addEventListener('keydown', (e) => {
     }
     if (e.code === 'KeyR' && !gameOver) { // Reload with 'R' key
         reload();
+    }
+    if (e.code === 'KeyS' && !gameOver) { // Save game with 'S' key
+        saveGame();
     }
 });
 
@@ -90,6 +143,7 @@ function spawnEnemy() {
         const enemy = document.createElement('div');
         enemy.classList.add('enemy');
         enemy.style.left = `${Math.random() * (window.innerWidth - 40)}px`;
+        enemy.style.top = `0px`; // Start at the top of the screen
         gameContainer.appendChild(enemy);
 
         const enemyInterval = setInterval(() => {
@@ -97,9 +151,15 @@ function spawnEnemy() {
             if (enemyTop > window.innerHeight) {
                 enemy.remove();
                 clearInterval(enemyInterval);
-                takeDamage(10); // Player takes damage when enemy reaches the bottom
             } else {
-                enemy.style.top = `${enemyTop + 2}px`;
+                enemy.style.top = `${enemyTop + 2}px`; // Move enemy downward
+
+                // Check for collision with player
+                if (checkCollision(player, enemy)) {
+                    takeDamage(10); // Player takes damage when touched by enemy
+                    enemy.remove(); // Remove the enemy after touching the player
+                    clearInterval(enemyInterval);
+                }
             }
         }, 50);
     }
@@ -108,26 +168,40 @@ function spawnEnemy() {
 // Player takes damage
 function takeDamage(damage) {
     health -= damage;
-    healthDisplay.textContent = `Health: ${health}`;
-    deaths++; // Increment deaths counter
-    deathsDisplay.textContent = `Deaths: ${deaths}`;
+    updateUI();
     if (health <= 0) {
-        gameOver = true;
-        alert("Health depleted! Game Over!");
+        respawn();
     }
+}
+
+// Respawn player and clear enemies
+function respawn() {
+    deaths++; // Increment deaths counter
+    updateUI();
+
+    // Reset player health and ammo
+    health = 100;
+    ammo = maxAmmo;
+    updateUI();
+
+    // Clear all enemies
+    document.querySelectorAll('.enemy').forEach(enemy => enemy.remove());
 }
 
 setInterval(spawnEnemy, 1000);
 
 // Collision detection
-function checkCollision(bullet, enemy) {
-    const bulletRect = bullet.getBoundingClientRect();
-    const enemyRect = enemy.getBoundingClientRect();
+function checkCollision(element1, element2) {
+    const rect1 = element1.getBoundingClientRect();
+    const rect2 = element2.getBoundingClientRect();
 
     return !(
-        bulletRect.top > enemyRect.bottom ||
-        bulletRect.bottom < enemyRect.top ||
-        bulletRect.left > enemyRect.right ||
-        bulletRect.right < enemyRect.left
+        rect1.top > rect2.bottom ||
+        rect1.bottom < rect2.top ||
+        rect1.left > rect2.right ||
+        rect1.right < rect2.left
     );
 }
+
+// Load saved game and high score when the page loads
+loadGame();
