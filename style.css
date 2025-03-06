@@ -33,6 +33,22 @@ body {
   top: 0;
 }
 
+.enemy.basic {
+  background-color: red;
+}
+
+.enemy.tank {
+  background-color: purple;
+  width: 60px;
+  height: 60px;
+}
+
+.enemy.speedy {
+  background-color: yellow;
+  width: 30px;
+  height: 30px;
+}
+
 #ammo, #health {
   position: absolute;
   top: 10px;
@@ -73,4 +89,21 @@ body {
 
 #deaths {
   right: 10px;
+}
+
+#instructions {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 16px;
+}
+
+#high-score {
+  position: absolute;
+  top: 80px;
+  left: 10px;
+  color: white;
+  font-size: 20px;
 }
