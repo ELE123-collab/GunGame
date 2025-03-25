@@ -15,6 +15,105 @@ let highScore = 0; // Track high score
 let gameOver = false;
 let isReloading = false; // Track if the player is currently reloading
 
+// Default controls
+let controls = {
+    left: "ArrowLeft",
+    right: "ArrowRight",
+    shoot: " ",
+    reload: "r"
+  };
+  
+  // Load saved controls from localStorage
+  function loadControls() {
+    const savedControls = localStorage.getItem('gameControls');
+    if (savedControls) {
+      controls = JSON.parse(savedControls);
+    }
+    updateControlDisplay();
+  }
+  
+  // Save controls to localStorage
+  function saveControls() {
+    localStorage.setItem('gameControls', JSON.stringify(controls));
+    alert("Controls saved!");
+  }
+  
+  // Reset to default controls
+  function resetControls() {
+    controls = {
+      left: "ArrowLeft",
+      right: "ArrowRight",
+      shoot: " ",
+      reload: "r"
+    };
+    updateControlDisplay();
+    localStorage.removeItem('gameControls');
+  }
+  
+  // Update the controls menu display
+  function updateControlDisplay() {
+    document.getElementById('left-key').value = controls.left;
+    document.getElementById('right-key').value = controls.right;
+    document.getElementById('shoot-key').value = controls.shoot;
+    document.getElementById('reload-key').value = controls.reload;
+  }
+  
+  // Set up key binding interface
+  document.querySelectorAll('.key-input').forEach(input => {
+    input.addEventListener('click', function() {
+      this.value = "Press any key...";
+      const keyListener = (e) => {
+        e.preventDefault();
+        this.value = e.key;
+        this.blur();
+        window.removeEventListener('keydown', keyListener);
+        
+        // Update the controls object
+        const controlId = this.id.replace('-key', '');
+        controls[controlId] = e.key;
+      };
+      window.addEventListener('keydown', keyListener, {once: false});
+    });
+  });
+  
+  // Menu buttons
+  document.getElementById('open-controls').addEventListener('click', () => {
+    document.getElementById('controls-menu').style.display = 'block';
+  });
+  
+  document.getElementById('save-controls').addEventListener('click', () => {
+    saveControls();
+    document.getElementById('controls-menu').style.display = 'none';
+  });
+  
+  document.getElementById('reset-controls').addEventListener('click', resetControls);
+  
+  // Load controls when game starts
+  loadControls();
+  
+  // Update your movement and action handlers to use the custom controls
+  document.addEventListener('keydown', (e) => {
+    if (gameOver) return;
+    
+    if (e.key === controls.left) {
+      // Move left logic
+      const currentLeft = parseInt(player.style.left || '0');
+      player.style.left = `${Math.max(0, currentLeft - 10)}px`;
+    }
+    else if (e.key === controls.right) {
+      // Move right logic
+      const currentLeft = parseInt(player.style.left || '0');
+      player.style.left = `${Math.min(window.innerWidth - player.offsetWidth, currentLeft + 10)}px`;
+    }
+    else if (e.key === controls.shoot) {
+      shoot();
+    }
+    else if (e.key === controls.reload) {
+      reload();
+    }
+  });
+
+
 // Load saved game state and high score
 function loadGame() {
     const savedGame = JSON.parse(localStorage.getItem('savedGame'));
