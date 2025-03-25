@@ -16,6 +16,29 @@
 <div id="instructions">Press 'S' to save your game.</div>
 <div id="high-score">High Score: 0</div>
     </div>
+    <div id="controls-menu" style="display:none;">
+        <h2>Controls Settings</h2>
+        <div class="control-setting">
+          <label>Move Left: </label>
+          <input type="text" id="left-key" class="key-input" readonly>
+        </div>
+        <div class="control-setting">
+          <label>Move Right: </label>
+          <input type="text" id="right-key" class="key-input" readonly>
+        </div>
+        <div class="control-setting">
+          <label>Shoot: </label>
+          <input type="text" id="shoot-key" class="key-input" readonly>
+        </div>
+        <div class="control-setting">
+          <label>Reload: </label>
+          <input type="text" id="reload-key" class="key-input" readonly>
+        </div>
+        <button id="save-controls">Save Controls</button>
+        <button id="reset-controls">Reset to Default</button>
+      </div>
+      
+      <button id="open-controls">⚙️ Controls</button>
     <script src="script.js"></script>
 </body>
 </html>
