@@ -3,42 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Gun Game</title>
+    <title>WW2 Bunker Defense</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-container">
-        <div id="player"></div>
-        <div id="ammo">Ammo: 30</div>
-        <div id="health">Health: 100</div>
-        <div id="kills">Kills: 0</div>
-<div id="deaths">Deaths: 0</div>
-<div id="instructions">Press 'S' to save your game.</div>
-<div id="high-score">High Score: 0</div>
+    <!-- Main Menu Screen -->
+    <div id="main-menu">
+        <h1>WW2 BUNKER DEFENSE</h1>
+        <div class="menu-buttons">
+            <button id="play-btn">DEPLOY TO BATTLE</button>
+            <button id="shop-btn">ARMORY</button>
+            <button id="settings-btn">COMMAND CENTER</button>
+        </div>
     </div>
-    <div id="controls-menu" style="display:none;">
-        <h2>Controls Settings</h2>
-        <div class="control-setting">
-          <label>Move Left: </label>
-          <input type="text" id="left-key" class="key-input" readonly>
+
+    <!-- Mode Selection Screen -->
+    <div id="mode-selector">
+        <h2>BATTLEFRONT SELECTION</h2>
+        <button id="classic-mode">NORMANDY BEACH</button>
+        <button id="zombie-mode">ZOMBIE BLITZKRIEG</button>
+        <div class="mode-description">
+            <p id="classic-desc">Defend against waves of enemy soldiers</p>
+            <p id="zombie-desc" style="display:none">Survive Nazi zombie experiments gone wrong!</p>
         </div>
-        <div class="control-setting">
-          <label>Move Right: </label>
-          <input type="text" id="right-key" class="key-input" readonly>
+        <button id="back-to-menu" class="back-btn">RETURN TO BASE</button>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container">
+        <div id="bunker"></div>
+        <div id="player"></div>
+        <div id="ammo">AMMO: 8/8</div>
+        <div id="health">HEALTH: 100</div>
+        <div id="kills">KILLS: 0</div>
+        <div id="wave-counter">WAVE: 1</div>
+        <div id="high-score">HIGH SCORE: 0</div>
+        <div id="current-weapon">⚔️ Luger P08</div>
+        <div id="fire-mode-display">
+            <div class="fire-mode-icon">○</div>
+            <div id="fire-mode-text">SEMI</div>
+            <button id="fire-mode-btn" class="hud-btn">MODE (V)</button>
         </div>
-        <div class="control-setting">
-          <label>Shoot: </label>
-          <input type="text" id="shoot-key" class="key-input" readonly>
+        <button id="menu-btn" class="menu-btn">MENU</button>
+        
+        <!-- Death Screen -->
+        <div id="death-screen" class="death-screen">
+            <h2>YOU DIED</h2>
+            <p>Wave Reached: <span id="final-wave">1</span></p>
+            <p>Kills: <span id="final-kills">0</span></p>
+            <p>Points Earned: <span id="points-earned">0</span></p>
+            <button id="respawn-btn">REINFORCEMENTS ARRIVED</button>
+            <button id="death-to-menu" class="back-btn">RETURN TO BASE</button>
         </div>
-        <div class="control-setting">
-          <label>Reload: </label>
-          <input type="text" id="reload-key" class="key-input" readonly>
+    </div>
+
+    <!-- Shop Screen -->
+    <div id="shop-screen">
+        <h2>ARMORY</h2>
+        <div class="weapons-tab">
+            <h3>WEAPONS</h3>
+            <div class="shop-items" id="weapons-shop">
+                <div class="shop-item" data-weapon="mp40">
+                    <h3>MP40 SMG</h3>
+                    <div class="weapon-icon">🔫</div>
+                    <p>32-round magazine</p>
+                    <p>Medium damage (15)</p>
+                    <p>Fast reload (2s)</p>
+                    <button class="buy-btn" data-item="mp40">200 POINTS</button>
+                    <div class="owned-badge">OWNED</div>
+                </div>
+                <div class="shop-item" data-weapon="stg44">
+                    <h3>STG44 Rifle</h3>
+                    <div class="weapon-icon">💥</div>
+                    <p>20-round magazine</p>
+                    <p>High damage (25)</p>
+                    <p>Precise firing</p>
+                    <button class="buy-btn" data-item="stg44">300 POINTS</button>
+                    <div class="owned-badge">OWNED</div>
+                </div>
+                <div class="shop-item" data-weapon="mg42">
+                    <h3>MG42 Machine Gun</h3>
+                    <div class="weapon-icon">🔥</div>
+                    <p>50-round belt</p>
+                    <p>Rapid fire (10dmg)</p>
+                    <p>Heavy weapon</p>
+                    <button class="buy-btn" data-item="mg42">400 POINTS</button>
+                    <div class="owned-badge">OWNED</div>
+                </div>
+            </div>
         </div>
-        <button id="save-controls">Save Controls</button>
-        <button id="reset-controls">Reset to Default</button>
-      </div>
-      
-      <button id="open-controls">⚙️ Controls</button>
+        <div class="player-points">POINTS: <span id="points-display">0</span></div>
+        <button id="back-from-shop" class="back-btn">RETURN TO BASE</button>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen">
+        <h2>COMMAND CENTER</h2>
+        <div class="setting-group">
+            <label for="volume-control">Artillery Volume:</label>
+            <input type="range" id="volume-control" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <div class="setting-group">
+            <label for="difficulty">Combat Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Recruit</option>
+                <option value="medium" selected>Sergeant</option>
+                <option value="hard">Commando</option>
+            </select>
+        </div>
+        <div class="setting-group">
+            <label>
+                <input type="checkbox" id="gore-toggle"> Gore Effects
+            </label>
+        </div>
+        <button id="back-from-settings" class="back-btn">RETURN TO BASE</button>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="gunshot-sound" src="sounds/luger.wav" preload="auto"></audio>
+    <audio id="reload-sound" src="sounds/reload.wav" preload="auto"></audio>
+    <audio id="explosion-sound" src="sounds/explosion.wav" preload="auto"></audio>
+    <audio id="menu-music" src="sounds/menu_music.mp3" loop preload="auto"></audio>
+    <audio id="purchase-sound" src="sounds/purchase.wav" preload="auto"></audio>
+    <audio id="equip-sound" src="sounds/equip.wav" preload="auto"></audio>
+    <audio id="firemode-switch-sound" src="sounds/firemode_switch.wav" preload="auto"></audio>
+
     <script src="script.js"></script>
 </body>
 </html>
