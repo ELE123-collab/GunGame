@@ -1,155 +1,634 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  overflow: hidden;
-  background-color: #333;
+    background: linear-gradient(to bottom, #1a2a3a, #0a1a2a),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0 50 Q25 30 50 50 T100 50 L100 100 L0 100 Z" fill="%23222"/></svg>') bottom repeat-x;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
 }
 
+/* Main Menu Styles */
+#main-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+#main-menu h1 {
+    color: #d4af37;
+    font-size: 48px;
+    text-shadow: 2px 2px 4px #000;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 300px;
+}
+
+#main-menu button {
+    background: linear-gradient(to bottom, #654321, #3a2511);
+    border: 2px solid #d4af37;
+    color: #ffd700;
+    padding: 15px 25px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+}
+
+#main-menu button:hover {
+    background: linear-gradient(to bottom, #765432, #4a351f);
+    transform: scale(1.05);
+}
+
+/* Mode Selector Styles */
+#mode-selector {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    color: white;
+}
+
+#mode-selector h2 {
+    color: #d4af37;
+    margin-bottom: 30px;
+}
+
+#mode-selector button {
+    background: linear-gradient(to bottom, #654321, #3a2511);
+    border: 2px solid #d4af37;
+    color: #ffd700;
+    padding: 15px 25px;
+    margin: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s;
+    width: 80%;
+    max-width: 300px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.mode-description p {
+    margin: 15px 0;
+    font-size: 16px;
+    color: #ccc;
+}
+
+/* Game Container Styles */
 #game-container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    overflow: hidden;
+    cursor: none;
+}
+
+#bunker {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 100px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><rect x="20" y="30" width="160" height="70" fill="%23654321"/><rect x="80" y="0" width="40" height="30" fill="%23333"/><rect x="60" y="30" width="80" height="20" fill="%23444"/></svg>');
+    z-index: 5;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
 }
 
 #player {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background-color: blue;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+    width: 60px;
+    height: 80px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80"><rect x="15" y="20" width="30" height="60" fill="%23333"/><circle cx="30" cy="15" r="10" fill="%23654321"/><rect x="25" y="40" width="10" height="30" fill="%23222"/></svg>');
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    transition: left 0.1s ease-out;
+    will-change: transform;
+}
+
+.player.moving {
+    animation: move-wobble 0.3s infinite alternate;
+}
+
+@keyframes move-wobble {
+    0% { transform: translateX(-50%) rotate(-1deg); }
+    100% { transform: translateX(-50%) rotate(1deg); }
 }
 
 .enemy {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: red;
-  top: 0;
+    width: 50px;
+    height: 80px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 80"><rect x="10" y="10" width="30" height="70" fill="%232a4d69"/><circle cx="25" cy="10" r="8" fill="%23f0f0f0"/><rect x="20" y="30" width="10" height="30" fill="%23111"/></svg>');
+    position: absolute;
+    animation: march 0.8s infinite linear;
+    will-change: transform;
 }
 
-.enemy.basic {
-  background-color: red;
+.enemy.zombie {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 80"><rect x="10" y="10" width="30" height="70" fill="%232a6932"/><circle cx="25" cy="10" r="8" fill="%23722"/><rect x="20" y="30" width="10" height="30" fill="%23300"/></svg>');
+    animation: zombie-shuffle 1s infinite ease-in-out;
 }
 
-.enemy.tank {
-  background-color: purple;
-  width: 60px;
-  height: 60px;
+@keyframes march {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
 }
 
-.enemy.speedy {
-  background-color: yellow;
-  width: 30px;
-  height: 30px;
-}
-
-#ammo, #health {
-  position: absolute;
-  top: 10px;
-  color: white;
-  font-size: 20px;
-}
-
-#ammo {
-  left: 10px;
-}
-
-#health {
-  right: 10px;
+@keyframes zombie-shuffle {
+    0%, 100% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
 }
 
 .bullet {
-  position: absolute;
-  width: 10px;
-  height: 20px;
-  background-color: yellow;
-  bottom: 0;
+    width: 8px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 20"><rect width="8" height="20" fill="%23ff0"/><rect x="2" y="4" width="4" height="16" fill="%23f80"/></svg>');
+    position: absolute;
+    z-index: 8;
 }
 
-#ammo.reloading {
-  color: orange;
+.zombie-projectile {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 7;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
 }
 
-#kills, #deaths {
-  position: absolute;
-  top: 50px;
-  color: white;
-  font-size: 20px;
+.zombie-projectile[data-explosive="true"] {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    animation: pulse 0.5s infinite;
 }
 
-#kills {
-  left: 10px;
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
-#deaths {
-  right: 10px;
+.explosion {
+    width: 60px;
+    height: 60px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" fill="%23f80"/><circle cx="30" cy="30" r="15" fill="%23f00"/></svg>');
+    position: absolute;
+    animation: explode 0.5s forwards;
+    z-index: 10;
 }
 
-#instructions {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  font-size: 16px;
+@keyframes explode {
+    0% { transform: scale(0.1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
 }
 
-#high-score {
-  position: absolute;
-  top: 80px;
-  left: 10px;
-  color: white;
-  font-size: 20px;
+/* HUD Elements */
+#ammo, #health, #kills, #wave-counter, #high-score, #current-weapon {
+    color: #ff0;
+    text-shadow: 1px 1px 2px #000;
+    font-weight: bold;
+    letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 12px;
+    border: 1px solid #654321;
+    border-radius: 3px;
+    font-size: 16px;
+    z-index: 100;
+    position: absolute;
 }
 
-#controls-menu {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.9);
-  padding: 20px;
-  border: 2px solid white;
-  z-index: 1000;
-  color: white;
+#ammo { 
+    top: 10px; 
+    left: 10px; 
 }
 
-.control-setting {
-  margin: 15px 0;
+#health { 
+    top: 10px; 
+    right: 10px; 
 }
 
-.key-input {
-  background: #333;
-  color: white;
-  border: 1px solid #555;
-  padding: 5px;
-  width: 50px;
-  text-align: center;
-  margin-left: 10px;
+#kills { 
+    top: 50px; 
+    left: 10px; 
 }
 
-#open-controls {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 100;
+#wave-counter { 
+    top: 50px; 
+    right: 10px; 
+    display: none; 
 }
 
-/* Hide audio controls (just in case) */
-audio {
-  display: none;
+#high-score { 
+    top: 90px; 
+    left: 10px; 
+}
+
+#current-weapon { 
+    bottom: 10px; 
+    left: 10px; 
+}
+
+/* Fire Mode Selector */
+#fire-mode-display {
+    position: absolute;
+    bottom: 50px;
+    left: 10px;
+    background: linear-gradient(to bottom, rgba(20, 20, 20, 0.8), rgba(40, 40, 40, 0.8));
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #654321;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(101, 67, 33, 0.3);
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.fire-mode-icon {
+    font-size: 24px;
+    width: 30px;
+    text-align: center;
+    color: #ffd700;
+}
+
+#fire-mode-text {
+    min-width: 60px;
+    text-align: center;
+    text-shadow: 1px 1px 2px #000;
+    font-weight: bold;
+}
+
+.hud-btn {
+    background: linear-gradient(to bottom, #654321, #3a2511);
+    border: 1px solid #d4af37;
+    color: #ffd700;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.hud-btn:hover {
+    background: linear-gradient(to bottom, #765432, #4a351f);
+    transform: translateY(-1px);
+}
+
+.mode-switch-active {
+    animation: pulse 0.2s ease-out;
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+/* Menu Button */
+.menu-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #d4af37;
+    color: #ffd700;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 1000;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.menu-btn:hover {
+    background: rgba(106, 74, 60, 0.9);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+/* Death Screen Styles */
+.death-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: #ff0000;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+.death-screen h2 {
+    font-size: 72px;
+    text-shadow: 0 0 10px #fff;
+    margin-bottom: 30px;
+    animation: pulse-red 1.5s infinite;
+}
+
+.death-screen p {
+    font-size: 24px;
+    color: #fff;
+    margin: 10px 0;
+}
+
+#respawn-btn {
+    margin-top: 30px;
+    padding: 15px 30px;
+    font-size: 20px;
+    background: linear-gradient(to bottom, #8B0000, #600000);
+    border: 2px solid #ff0000;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#respawn-btn:hover {
+    background: linear-gradient(to bottom, #A00000, #700000);
+    transform: scale(1.05);
+}
+
+@keyframes pulse-red {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* Shop Screen Styles */
+#shop-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    color: white;
+}
+
+.shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+    max-width: 900px;
+}
+
+.shop-item {
+    background: rgba(50, 50, 50, 0.7);
+    border: 2px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.shop-item.owned {
+    border-color: #d4af37;
+    background: rgba(100, 80, 0, 0.2);
+}
+
+.weapon-icon {
+    font-size: 40px;
+    margin: 10px 0;
+}
+
+.shop-item h3 {
+    color: #d4af37;
+    margin-bottom: 10px;
+}
+
+.shop-item p {
+    margin: 8px 0;
+    color: #ccc;
+    font-size: 14px;
+}
+
+.buy-btn {
+    background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    font-weight: bold;
+}
+
+.buy-btn.owned {
+    display: none;
+}
+
+.owned-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #d4af37;
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    display: none;
+}
+
+.shop-item.owned .owned-badge {
+    display: block;
+}
+
+.buy-btn:hover:not(.owned) {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.player-points {
+    font-size: 24px;
+    margin-bottom: 30px;
+    color: #ffd700;
+}
+
+/* Settings Screen Styles */
+#settings-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    color: white;
+}
+
+#settings-screen h2 {
+    color: #d4af37;
+    margin-bottom: 40px;
+}
+
+.setting-group {
+    margin: 15px 0;
+    width: 300px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.setting-group input[type="range"],
+.setting-group select {
+    width: 100%;
+    padding: 8px;
+    background: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+}
+
+.setting-group input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Back Button Styles */
+.back-btn {
+    background: linear-gradient(to bottom, #8B0000, #600000);
+    border: 1px solid #ff0000;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 30px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.back-btn:hover {
+    background: linear-gradient(to bottom, #A00000, #700000);
+}
+
+/* Power-ups */
+.power-up {
+    width: 30px;
+    height: 30px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><rect x="5" y="5" width="20" height="20" fill="%23d4af37" stroke="%23800" stroke-width="2"/></svg>');
+    position: absolute;
+    z-index: 50;
+    animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.wave-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #d4af37;
+    color: #ff0;
+    padding: 20px 40px;
+    border-radius: 5px;
+    font-size: 24px;
+    text-align: center;
+    z-index: 200;
+    animation: pulse 1.5s infinite;
+}
+
+/* Audio Elements */
+audio { 
+    display: none; 
+}
+
+/* Animations */
+@keyframes reload-shake {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(5deg); }
+    75% { transform: translateX(-50%) rotate(-5deg); }
+}
+
+@keyframes hit-flash {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(2); }
+}
+
+@keyframes dodge {
+    0% { transform: translateX(-50%); }
+    25% { transform: translateX(-50%) translateY(-20px); }
+    50% { transform: translateX(-50%) translateX(30px); }
+    75% { transform: translateX(-50%) translateY(20px); }
+    100% { transform: translateX(-50%); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #main-menu h1 {
+        font-size: 36px;
+    }
+    
+    .menu-buttons {
+        width: 250px;
+    }
+    
+    #fire-mode-display {
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
